@@ -330,6 +330,7 @@ If you don't specify any models, then it uses LJSpeech based English model.
         print(
             " > Available speaker ids: (Set --speaker_idx flag to one of these values to use the multi-speaker model."
         )
+        print(synthesizer.tts_model.__dict__)
         print(synthesizer.tts_model.speaker_manager.name_to_id)
         return
 
@@ -353,21 +354,27 @@ If you don't specify any models, then it uses LJSpeech based English model.
     if args.text:
         print(" > Text: {}".format(args.text))
 
-    # kick it
-    wav = synthesizer.tts(
-        args.text,
-        args.speaker_idx,
-        args.language_idx,
-        args.speaker_wav,
-        reference_wav=args.reference_wav,
-        style_wav=args.capacitron_style_wav,
-        style_text=args.capacitron_style_text,
-        reference_speaker_name=args.reference_speaker_idx,
-    )
 
-    # save the results
-    print(" > Saving output to {}".format(args.out_path))
-    synthesizer.save_wav(wav, args.out_path)
+    num_generate = 150
+
+    for i in range(num_generate):
+        # kick it
+        wav = synthesizer.tts(
+            args.text,
+            args.speaker_idx,
+            args.language_idx,
+            args.speaker_wav,
+            reference_wav=args.reference_wav,
+            style_wav=args.capacitron_style_wav,
+            style_text=args.capacitron_style_text,
+            reference_speaker_name=args.reference_speaker_idx,
+        )
+
+        out_path_i = args.out_path.replace('.wav', '') + '-' + ('%04d' % (i+50)) + '.wav'
+
+        # save the results
+        print(" > Saving output to {}".format(out_path_i))
+        synthesizer.save_wav(wav, out_path_i)
 
 
 if __name__ == "__main__":
