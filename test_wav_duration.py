@@ -3,12 +3,12 @@ import wave
 
 from statistics import mean
 
-def get_time_duration_seconds(wav_path):
-    with wave.open(wav_path) as wav_file:
-        return wav_file.getnframes() / wav_file.getframerate()
+from TTS.utils.utils import get_time_duration_seconds
 
 
-TARGET_DIR = 'TTS-generated'
+# TARGET_DIR = 'TTS-for-finetune'
+TARGET_DIR = 'TTS-for-adv'
+# TARGET_DIR = 'TTS-test'
 
 if __name__ == '__main__':
     t_list = os.listdir(TARGET_DIR)
@@ -30,8 +30,7 @@ if __name__ == '__main__':
         time_set_remove_max.remove(max_item)
         mean_value = mean(time_set_remove_max)
 
-        if max_item >= 2 * mean_value:
-            print('Duration of', max_item, ':', duration2wav[max_item])
+        print('Duration of', max_item, ':', duration2wav[max_item])
 
         print('')
 

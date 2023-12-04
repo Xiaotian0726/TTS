@@ -10,6 +10,7 @@ from pathlib import Path
 
 from TTS.utils.manage import ModelManager
 from TTS.utils.synthesizer import Synthesizer
+from TTS.utils.utils import get_time_duration_seconds
 
 
 def str2bool(v):
@@ -161,6 +162,19 @@ If you don't specify any models, then it uses LJSpeech based English model.
         default="tts_output.wav",
         help="Output wav file path.",
     )
+    parser.add_argument(
+        "--num",
+        type=int,
+        default=1,
+        help="Num of wav files to be generated.",
+    )
+    parser.add_argument(
+        "--duration_upper_bound",
+        type=float,
+        default=100.0,
+        help="Duration upper bound.",
+    )
+    
     parser.add_argument("--use_cuda", type=bool, help="Run model on CUDA.", default=False)
     parser.add_argument(
         "--vocoder_path",
@@ -354,10 +368,8 @@ If you don't specify any models, then it uses LJSpeech based English model.
     if args.text:
         print(" > Text: {}".format(args.text))
 
-
-    num_generate = 150
-
-    for i in range(num_generate):
+    i = 0
+    while i < args.num:
         # kick it
         wav = synthesizer.tts(
             args.text,
@@ -370,11 +382,16 @@ If you don't specify any models, then it uses LJSpeech based English model.
             reference_speaker_name=args.reference_speaker_idx,
         )
 
-        out_path_i = args.out_path.replace('.wav', '') + '-' + ('%04d' % (i+50)) + '.wav'
+        out_path_i = args.out_path.replace('.wav', '') + '-' + ('%04d' % (i)) + '.wav'
 
         # save the results
         print(" > Saving output to {}".format(out_path_i))
         synthesizer.save_wav(wav, out_path_i)
+        
+        # 如果生成的音频文件的时长超过了 duration upper bound，说明说生成的文件有问题，需要重新生成该文件
+        if get_time_duration_seconds(out_path_i) > args.duration_upper_bound:
+            i -= 1
+        i += 1
 
 
 if __name__ == "__main__":
