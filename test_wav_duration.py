@@ -7,8 +7,12 @@ from TTS.utils.utils import get_time_duration_seconds
 
 
 # TARGET_DIR = 'TTS-for-finetune'
-TARGET_DIR = 'TTS-for-adv'
-# TARGET_DIR = 'TTS-test'
+
+# TARGET_DIR = 'TTS-for-adv'
+
+# TARGET_DIR = 'TTS-for-local-delta-test'
+
+TARGET_DIR = 'TTS-for-physical-test'
 
 if __name__ == '__main__':
     t_list = os.listdir(TARGET_DIR)
@@ -23,14 +27,14 @@ if __name__ == '__main__':
             duration2wav[d_float].add(wav)
 
         print(t)
-        print(list(duration2wav.keys()))
+        print(sorted(list(duration2wav.keys())))
 
         max_item = max(list(duration2wav.keys()))
         time_set_remove_max = list(duration2wav.keys())
         time_set_remove_max.remove(max_item)
         mean_value = mean(time_set_remove_max)
 
-        print('Duration of', max_item, ':', duration2wav[max_item])
+        # print('Duration of', max_item, ':', duration2wav[max_item])
 
         print('')
 
